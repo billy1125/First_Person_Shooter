@@ -407,7 +407,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -853,8 +853,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7237823604882803456}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalRotation: {x: 0, y: 0.29795805, z: 0, w: 0.954579}
+  m_LocalPosition: {x: -3.58, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -862,7 +862,7 @@ Transform:
   - {fileID: 7237823606563238540}
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 34.67, z: 0}
 --- !u!54 &7237823604882803459
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -905,7 +905,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa95a8a14d4bfa940933a8aa7187740d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fpsCam: {fileID: 7237823606563238539}
+  PlayerCamera: {fileID: 7237823606563238539}
   attackPoint: {fileID: 1680573604}
   bullet: {fileID: 3159646258638266161, guid: 1cfd9fae67872034b855b294bf33e639, type: 3}
 --- !u!1 &7237823605460715954

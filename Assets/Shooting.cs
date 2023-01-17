@@ -5,7 +5,7 @@ using UnityEngine;
 public class Shooting : MonoBehaviour
 {
     [Header("參考物件")]
-    public Camera fpsCam;
+    public Camera PlayerCamera;
     public Transform attackPoint;
 
     [Header("子彈預置物件")]
@@ -13,26 +13,26 @@ public class Shooting : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        // 判斷有沒有按下左鍵
+        if (Input.GetMouseButtonDown(0) == true)
         {
-            Ray ray = fpsCam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0)); //Just a ray through the middle of your current view           
+            Ray ray = PlayerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));  // 從攝影機射出一條射線
+            RaycastHit hit;  // 宣告一個射擊點
+            Vector3 targetPoint;  // 宣告一個位置點變數，到時候如果有打到東西，就存到這個變數
 
-            RaycastHit hit;
-
-            Vector3 targetPoint;
-            if (Physics.Raycast(ray, out hit))
-                targetPoint = hit.point;
+            // 如果射線有打到具備碰撞體的物件
+            if (Physics.Raycast(ray, out hit) == true)
+                targetPoint = hit.point;         // 將打到物件的位置點存進 targetPoint
             else
-                targetPoint = ray.GetPoint(75); //Just a point far away from the player
+                targetPoint = ray.GetPoint(75);  // 如果沒有打到物件，就以長度75的末端點取得一個點，存進 targetPoint
 
-            Debug.DrawRay(ray.origin, targetPoint - ray.origin, Color.red, 10); // 在測試階段將射線設定為紅色線條，來看看線條長度夠不夠？
+            Debug.DrawRay(ray.origin, targetPoint - ray.origin, Color.red, 10); // 畫出這條射線
 
-            //Calculate direction from attackPoint to targetPoint
-            Vector3 directionWithoutSpread = targetPoint - attackPoint.position;
-            GameObject currentBullet = Instantiate(bullet, attackPoint.position, Quaternion.identity); //store instantiated bullet in currentBullet
-            currentBullet.transform.forward = directionWithoutSpread.normalized;
+            Vector3 shootingDirection = targetPoint - attackPoint.position; // 以起點與終點之間兩點位置，計算出射線的方向
+            GameObject currentBullet = Instantiate(bullet, attackPoint.position, Quaternion.identity); // 在攻擊點上面產生一個子彈
+            currentBullet.transform.forward = shootingDirection.normalized; // 將子彈飛行方向與射線方向一致
 
-            currentBullet.GetComponent<Rigidbody>().AddForce(directionWithoutSpread.normalized * 50, ForceMode.Impulse);
-        }       
+            currentBullet.GetComponent<Rigidbody>().AddForce(currentBullet.transform.forward * 20, ForceMode.Impulse); // 依據飛行方向推送子彈
+        }
     }
 }
