@@ -16,9 +16,7 @@ public class Shooting : MonoBehaviour
     public int magazineSize;        // 設定彈夾可以放多少顆子彈？
     public int bulletsLeft;         // 子彈還有多少顆？(如果沒有要測試，你可以設定成 Private)
     public float reloadTime;        // 設定換彈夾所需要的時間
-    public int bulletsShot;         // 目前已連射數(如果沒有要測試，你可以設定成 Private)
-    public int bulletsPerTap;       // 連射最大數量
-    public float timeBetweenShots;  // 連射時間間隔
+    public float recoilForce;       // 反作用力
 
     bool reloading;             // 布林變數：儲存是不是正在換彈夾的狀態？True：正在換彈夾、False：換彈夾的動作已結束
 
@@ -26,7 +24,8 @@ public class Shooting : MonoBehaviour
     public TextMeshProUGUI ammunitionDisplay; // 彈量顯示
     public TextMeshProUGUI reloadingDisplay;  // 顯示是不是正在換彈夾？
 
-    bool allowInvoke = true;
+    //bool allowInvoke = true;
+    public Animator ani;
 
     private void Start()
     {        
@@ -51,7 +50,6 @@ public class Shooting : MonoBehaviour
             if (bulletsLeft > 0 && !reloading)
             {
                 Shoot();
-                bulletsShot = 0;
             }
         }
 
@@ -86,23 +84,12 @@ public class Shooting : MonoBehaviour
                           //bulletsLeft -= 1;               
                           //bulletsLeft = bulletsLeft - 1;  // 比較囉嗦的寫法
 
-        //bulletsShot++;
-
-        //if (bulletsShot < bulletsPerTap && bulletsLeft > 0)
-        //    Invoke("Shoot", timeBetweenShots);
-
-        //Invoke resetShot function (if not already invoked), with your timeBetweenShooting
-        if (allowInvoke)
-        {
-            Invoke("ResetShot", 0.5f);
-            allowInvoke = false;
-
-            //Add recoil to player (should only be called once)
-            this.GetComponent<Rigidbody>().AddForce(-shootingDirection.normalized * 50, ForceMode.Impulse);
-            this.GetComponent<Rigidbody>().AddForce(this.transform.up , ForceMode.Impulse);
-        }
+        // 後座力模擬
+        this.GetComponent<Rigidbody>().AddForce(-shootingDirection.normalized * recoilForce, ForceMode.Impulse);
 
         ShowAmmoDisplay();                 // 更新彈量顯示
+
+        ani.SetTrigger("Fire");
     }
 
     // 方法：換彈夾的延遲時間設定
@@ -127,12 +114,5 @@ public class Shooting : MonoBehaviour
     {        
         if (ammunitionDisplay != null)
             ammunitionDisplay.SetText($"Ammo {bulletsLeft} / {magazineSize}");
-    }
-
-    private void ResetShot()
-    {
-        //Allow shooting and invoking again
-        //readyToShoot = true;
-        allowInvoke = true;
     }
 }
