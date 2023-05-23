@@ -65,7 +65,9 @@ public class Weapon : MonoBehaviour
             PlayerObejct.GetComponent<Rigidbody>().AddForce(-shootingDirection.normalized * recoilForce, ForceMode.Impulse);                       
         }
         ShowAmmoDisplay();                 // 更新彈量顯示
-        transform.GetChild(0).GetComponent<Animator>().SetTrigger("Fire");  // 觸發「Fire」的觸發變數
+
+        if (transform.GetChild(0).GetComponent<Animator>() != null)
+            transform.GetChild(0).GetComponent<Animator>().SetTrigger("Fire");  // 觸發「Fire」的觸發變數
     }
 
     private void OnEnable()
