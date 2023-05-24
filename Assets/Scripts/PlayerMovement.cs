@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("按鍵綁定")]
     public KeyCode jumpKey = KeyCode.Space;
+    public KeyCode accelerateKey = KeyCode.LeftShift;
 
     [Header("基本設定")]
     public Transform PlayerCamera;   // 攝影機
@@ -27,6 +28,7 @@ public class PlayerMovement : MonoBehaviour
     private float verticalInput;     // 上下方向按鍵的數值(-1 <= Y <= +1)
 
     private Vector3 moveDirection;   // 移動方向
+    private float accelerateSpeed;
 
     private Rigidbody rbFirstPerson; // 第一人稱物件(膠囊體)的剛體
 
@@ -70,6 +72,11 @@ public class PlayerMovement : MonoBehaviour
             Jump();
             Invoke(nameof(ResetJump), jumpCooldown); // 如果跳躍過後，就會依照設定的限制時間倒數，時間到了才能往上跳躍
         }
+
+        if (Input.GetKey(accelerateKey))
+            accelerateSpeed = 5.0f;
+        else
+            accelerateSpeed = 1.0f;
     }
 
     private void MovePlayer()
@@ -81,7 +88,7 @@ public class PlayerMovement : MonoBehaviour
         if (grounded)
         {
             moveDirection = new Vector3(moveDirection.x, 0, moveDirection.z);
-            rbFirstPerson.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+            rbFirstPerson.AddForce(moveDirection.normalized * moveSpeed * 10f * accelerateSpeed, ForceMode.Force);
         }            
         // 如果不在地面，則移動速度還可以乘上一個在空中的加乘數字，可以製造人物一跳往上飛的超人飛行效果
         else if (!grounded)
