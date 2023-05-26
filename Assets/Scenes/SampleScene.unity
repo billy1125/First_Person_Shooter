@@ -5489,7 +5489,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxLifeValue: 100
-  lifeValueChangeUnit: 1
+  lifeHpChangeUnit: 1
+  gameManager: {fileID: 16574623}
 --- !u!1 &7237823605460715954
 GameObject:
   m_ObjectHideFlags: 0

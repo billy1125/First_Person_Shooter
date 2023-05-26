@@ -8,25 +8,19 @@ public class GameManager : MonoBehaviour
     [Header("UI設定")]
     public Image lifeBarImage;
 
-
-    // Start is called before the first frame update
-    void Start()
+    void OnEnable()
     {
-        PlayerController.PlayerDamage += UpdateLifeBar;
+        PlayerController.onHpChange += UpdateLifeBar;   // 訂閱PlayerController的onHpChange通知
+                                                        // 也就是說，角色生命值變化，GameManager都會知道，再依據角色生命值的數值更新血條內容
+                                                        // 這樣的寫法可以減少程式之間的依賴程度(減低程式耦合的程度)
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnDisable()
     {
-        
+        PlayerController.onHpChange -= UpdateLifeBar;  // 取消訂閱PlayerController的onHpChange通知
     }
 
-    private void OnDestroy()
-    {
-        // 取消訂閱事件  
-        PlayerController.PlayerDamage -= UpdateLifeBar;
-    }
-
+    // 函式：更新血條
     private void UpdateLifeBar(float _value)
     {
         lifeBarImage.fillAmount = _value;
