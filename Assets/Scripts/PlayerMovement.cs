@@ -23,6 +23,8 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask whatIsGround;   // 設定哪一個圖層是射線可以打到的
     public bool grounded;            // 布林變數：有沒有打到地面
 
+    public GameObject playerBody;
+
     private bool readyToJump;        // 設定是否可以跳躍
     private float horizontalInput;   // 左右方向按鍵的數值(-1 <= X <= +1)
     private float verticalInput;     // 上下方向按鍵的數值(-1 <= Y <= +1)
@@ -73,10 +75,17 @@ public class PlayerMovement : MonoBehaviour
             Invoke(nameof(ResetJump), jumpCooldown); // 如果跳躍過後，就會依照設定的限制時間倒數，時間到了才能往上跳躍
         }
 
+        // 走路動畫
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S))
+            playerBody.GetComponent<Animator>().SetBool("Walk", true);
+        else
+            playerBody.GetComponent<Animator>().SetBool("Walk", false);
+
+        // 加速
         if (Input.GetKey(accelerateKey))
             accelerateSpeed = 5.0f;
         else
-            accelerateSpeed = 1.0f;
+            accelerateSpeed = 1.0f;        
     }
 
     private void MovePlayer()
