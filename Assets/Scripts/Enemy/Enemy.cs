@@ -18,23 +18,43 @@ public class Enemy : MonoBehaviour
     NavMeshAgent navMeshAgent;                 // 宣告NavMeshAgent物件
     GameObject targetObject = null;            // 目標物件的變數
 
+    public IEnemyState currentState;
+    public IdleState idleState = new IdleState();
+    public PatrolState patrolState = new PatrolState();
+    public ChaseState chaseState = new ChaseState();
+
+    public void ChangeState(IEnemyState newState)
+    {
+        if (currentState != null)
+        {
+            currentState.OnExit(this);
+        }
+        currentState = newState;
+        currentState.OnEntry(this);
+    }
+
     void Start()
     {
-        targetObject = GameObject.FindGameObjectWithTag(targetName);   // 以帶有特定的標籤名稱為目標物件
-        navMeshAgent = GetComponent<NavMeshAgent>();                   // 接收NavMeshAgent
+        ChangeState(idleState);
+        
+
+        //targetObject = GameObject.FindGameObjectWithTag(targetName);   // 以帶有特定的標籤名稱為目標物件
+        //navMeshAgent = GetComponent<NavMeshAgent>();                   // 接收NavMeshAgent
         lifeAmount = maxLife;
     }
 
     void Update()
     {
+        currentState.OnUpdate(this);
+
         // 計算目標物件和自己的距離
-        float distance = Vector3.Distance(transform.position, targetObject.transform.position);
+        // float distance = Vector3.Distance(transform.position, targetObject.transform.position);
 
         // 判斷式：判斷距離是否低於最短追蹤距離，如果與目標的距離大於最小距離，就不追蹤，否則就開始追蹤
-        if (distance <= minimunTraceDistance)
-            navMeshAgent.enabled = true;
-        else
-            navMeshAgent.enabled = false;
+        //if (distance <= minimunTraceDistance)
+        //    navMeshAgent.enabled = true;
+        //else
+        //    navMeshAgent.enabled = false;
 
         faceTarget(); // 將敵人一直正面面對角色，因為敵人和角色位置會變化，所以要不斷Update
 
@@ -45,8 +65,8 @@ public class Enemy : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (navMeshAgent.enabled)
-            navMeshAgent.SetDestination(targetObject.transform.position);    // 讓自己往目標物的座標移動   
+        //if (navMeshAgent.enabled)
+        //    navMeshAgent.SetDestination(targetObject.transform.position);    // 讓自己往目標物的座標移動   
     }
 
     // 碰撞偵測
@@ -64,8 +84,8 @@ public class Enemy : MonoBehaviour
     // 函式：將敵人一直正面面對角色(也就是讓敵人的Z軸不斷的瞄準角色)
     void faceTarget()
     {
-        Vector3 targetDir = targetObject.transform.position - transform.position;                               // 計算敵人與角色之間的向量
-        Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, 0.1f * Time.deltaTime, 0.0F);      // 依照敵人Z軸向量與兩者間向量，可以計算出需要旋轉的角度
-        transform.rotation = Quaternion.LookRotation(newDir);                                                   // 進行旋轉
+        //Vector3 targetDir = targetObject.transform.position - transform.position;                               // 計算敵人與角色之間的向量
+        //Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, 0.1f * Time.deltaTime, 0.0F);      // 依照敵人Z軸向量與兩者間向量，可以計算出需要旋轉的角度
+        //transform.rotation = Quaternion.LookRotation(newDir);                                                   // 進行旋轉
     }
 }
