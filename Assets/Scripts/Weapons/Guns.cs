@@ -1,9 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Guns : MonoBehaviour, IGunStatus, IReload
+public class Guns : Weapon, IReload
 {
     [Header("參考物件")]
     public GameObject PlayerObejct;
@@ -19,19 +18,13 @@ public class Guns : MonoBehaviour, IGunStatus, IReload
     public float fireForce;         // 子彈射擊力道
     public float recoilForce;       // 反作用力
 
-    private int _magazineSize;
-    public int magazineSize { get { return _magazineSize; } set { _magazineSize = value; } }
+    protected bool isReloading;
+    protected int bulletsLeft;
 
-    private bool _isReloading;
-    public bool isReloading { get { return _isReloading; } }
-
-    private int _bulletsLeft;
-    public int bulletsLeft { get { return _bulletsLeft; } set { _bulletsLeft = value; } }
-
-    void Start()
+    void OnEnable()
     {
-        magazineSize = maxMagazineSize;
-        bulletsLeft = magazineSize;        // 遊戲一開始彈夾設定為全滿狀態
+        bulletsLeft = maxMagazineSize;        // 遊戲一開始彈夾設定為全滿狀態
+        onUpdateWeaponStatus?.Invoke($"Ammo {bulletsLeft} / {maxMagazineSize}");
     }
     
     // 方法：換彈夾的延遲時間設定
@@ -39,8 +32,9 @@ public class Guns : MonoBehaviour, IGunStatus, IReload
     {
         if (bulletsLeft < maxMagazineSize && !isReloading)
         {
-            _isReloading = true;                      // 首先將換彈夾狀態設定為：正在換彈夾            
+            isReloading = true;                      // 首先將換彈夾狀態設定為：正在換彈夾            
             Invoke("ReloadFinished", reloadTime);  // 依照reloadTime所設定的換彈夾時間倒數，時間為0時執行ReloadFinished方法
+            onReload?.Invoke(true); 
         }
     }
 
@@ -48,8 +42,33 @@ public class Guns : MonoBehaviour, IGunStatus, IReload
     private void ReloadFinished()
     {
         bulletsLeft = maxMagazineSize;          // 將子彈填滿
-        _isReloading = false;                    // 將換彈夾狀態設定為：更換彈夾結束
-        //reloadingDisplay.enabled = false;      // 將正在換彈夾的字幕隱藏，結束換彈夾的動作
+        isReloading = false;                    // 將換彈夾狀態設定為：更換彈夾結束
+        onReload?.Invoke(false);
     }
 
+    // 方法：瞄準
+    protected Vector3 AimToShoot()
+    {
+        Ray ray = PlayerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));  // 從攝影機射出一條射線
+        RaycastHit hit;  // 宣告一個射擊點
+        Vector3 targetPoint;  // 宣告一個位置點變數，到時候如果有打到東西，就存到這個變數
+
+        // 如果射線有打到具備碰撞體的物件
+        if (Physics.Raycast(ray, out hit) == true)
+            targetPoint = hit.point;         // 將打到物件的位置點存進 targetPoint
+        else
+            targetPoint = ray.GetPoint(75);  // 如果沒有打到物件，就以長度75的末端點取得一個點，存進 targetPoint
+
+        Debug.DrawRay(ray.origin, targetPoint - ray.origin, Color.red, 10); // 畫出這條射線
+
+        Vector3 shootingDirection = targetPoint - attackPoint.position; // 以起點與終點之間兩點位置，計算出射線的方向
+
+        return shootingDirection.normalized;
+    }
+
+    // 方法：後座力模擬
+    protected void MakeRecoilForce(Vector3 _dir)
+    {     
+        PlayerObejct.GetComponent<Rigidbody>().AddForce(_dir.normalized * -recoilForce, ForceMode.Impulse);
+    }
 }

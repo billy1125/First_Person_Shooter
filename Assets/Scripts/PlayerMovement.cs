@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpCooldown;       // 設定要幾秒後才能向上跳躍
     public float groundDrag;         // 地面的減速
     public float airMultiplier;      // 在空中的加乘速度，如果設定為0就代表不能飛，建議這個值要小於1
+    public float runSpeed;           // 跑步速度
 
     [Header("按鍵綁定")]
     public KeyCode jumpKey = KeyCode.Space;
@@ -23,16 +24,15 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask whatIsGround;   // 設定哪一個圖層是射線可以打到的
     public bool grounded;            // 布林變數：有沒有打到地面
 
+    [Header("角色模型")]
     public GameObject playerBody;
 
     private bool readyToJump;        // 設定是否可以跳躍
     private float horizontalInput;   // 左右方向按鍵的數值(-1 <= X <= +1)
     private float verticalInput;     // 上下方向按鍵的數值(-1 <= Y <= +1)
-
     private Vector3 moveDirection;   // 移動方向
-    private float accelerateSpeed;
-
     private Rigidbody rbFirstPerson; // 第一人稱物件(膠囊體)的剛體
+    private float accelerateSpeed;   // 用來切換跑步速度的變數
 
     private void Start()
     {
@@ -68,7 +68,7 @@ public class PlayerMovement : MonoBehaviour
         verticalInput = Input.GetAxisRaw("Vertical");
 
         // 如果按下設定的跳躍按鍵
-        if (Input.GetKey(jumpKey) && readyToJump && grounded)
+        if (Input.GetKeyDown(jumpKey) && readyToJump && grounded)
         {
             readyToJump = false;
             Jump();
@@ -81,9 +81,9 @@ public class PlayerMovement : MonoBehaviour
         else
             playerBody.GetComponent<Animator>().SetBool("Walk", false);
 
-        // 加速
+        // 跑步加速
         if (Input.GetKey(accelerateKey))
-            accelerateSpeed = 5.0f;
+            accelerateSpeed = runSpeed;
         else
             accelerateSpeed = 1.0f;        
     }

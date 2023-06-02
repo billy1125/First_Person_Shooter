@@ -1,14 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;  // 要有這個才能控制文字框
 
 public class WeaponManagement : MonoBehaviour
 {
-    [Header("UI物件")]
-    public TextMeshProUGUI ammunitionDisplay; // 彈量顯示
-    public TextMeshProUGUI reloadingDisplay;  // 顯示是不是正在換彈夾？
-
     [Header("武器")]
     public GameObject[] weaponObjects;        // 武器清單
 
@@ -17,14 +12,12 @@ public class WeaponManagement : MonoBehaviour
 
     private void Start()
     {
-        reloadingDisplay.enabled = false;  // 將顯示正在換彈夾的字幕隱藏起來
         weaponInUse = weaponObjects[0];    // 遊戲一開始設定武器為第0個武器
     }
 
     private void Update()
     {
         MyInput();
-        ShowWeaponStatus();
     }
 
     // 方法：偵測玩家操作狀態
@@ -96,20 +89,5 @@ public class WeaponManagement : MonoBehaviour
         }
         weaponObjects[weaponNumber].SetActive(true);    // 顯示所指定的武器
         weaponInUse = weaponObjects[weaponNumber];      // 設定目前所選擇的武器物件(屆時可以用來執行武器所特定的方法，下一章節會介紹)
-    }
-
-    void ShowWeaponStatus()
-    {
-        if (weaponInUse.TryGetComponent(out IGunStatus getGunStatusObj))
-        {
-            if (ammunitionDisplay != null)
-            {
-                ammunitionDisplay.SetText($"Ammo {getGunStatusObj.bulletsLeft} / {getGunStatusObj.magazineSize}");
-                if (getGunStatusObj.isReloading)
-                    reloadingDisplay.enabled = true;       // 將正在換彈夾的字幕顯示出來
-                else
-                    reloadingDisplay.enabled = false;
-            }
-        }
-    }
+    }    
 }

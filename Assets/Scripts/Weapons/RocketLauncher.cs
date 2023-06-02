@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pistol : Guns, IAttack
+public class RocketLauncher : Guns, IAttack
 {
     // 方法：射擊武器
     public void Attack()
@@ -10,7 +10,7 @@ public class Pistol : Guns, IAttack
         if (bulletsLeft > 0 && !isReloading)
         {
             Vector3 shootingDirection = AimToShoot();
-            
+
             GameObject currentBullet = Instantiate(bullet, attackPoint.position, Quaternion.identity); // 在攻擊點上面產生一個子彈
             currentBullet.transform.forward = shootingDirection; // 將子彈飛行方向與射線方向一致
             currentBullet.GetComponent<Rigidbody>().AddForce(currentBullet.transform.forward * fireForce, ForceMode.Impulse); // 依據飛行方向推送子彈
@@ -21,7 +21,7 @@ public class Pistol : Guns, IAttack
 
             MakeRecoilForce(shootingDirection);
 
-            onUpdateWeaponStatus?.Invoke($"Ammo {bulletsLeft} / {maxMagazineSize}"); 
+            onUpdateWeaponStatus?.Invoke($"Ammo {bulletsLeft} / {maxMagazineSize}");
         }
-    } 
+    }
 }

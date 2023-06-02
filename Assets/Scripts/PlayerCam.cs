@@ -9,11 +9,11 @@ public class PlayerCam : MonoBehaviour
     public float sensY;   // 鏡頭Y軸轉動敏感度
     public float mouseSmoothTime = 0.03f;
 
-    public float xRotation;
-    public float yRotaiton;
+    [HideInInspector] public float xRotation;
+    [HideInInspector] public float yRotaiton;
 
-    Vector3 currentMouseDelta = Vector3.zero;
-    Vector3 currentMouseDeltaVelocity = Vector3.zero;
+    private Vector3 currentMouseDelta = Vector3.zero;
+    private Vector3 currentMouseDeltaVelocity = Vector3.zero;
 
     private void Start()
     {
@@ -32,8 +32,8 @@ public class PlayerCam : MonoBehaviour
 
         xRotation = Mathf.Clamp(xRotation, -90f, 30f); // 限定X軸轉動在正30度到負90度間(抬頭和低頭有限制角度)
 
-        // 攝影機的動作微調
-        Vector3 targetMouseDelta = new Vector3(xRotation, yRotaiton);
+        // 攝影機的動作微調，使用SmoothDamp
+        Vector3 targetMouseDelta = new Vector3(xRotation, yRotaiton, 0);
         currentMouseDelta = Vector3.SmoothDamp(currentMouseDelta, targetMouseDelta, ref currentMouseDeltaVelocity, mouseSmoothTime);
 
         transform.rotation = Quaternion.Euler(currentMouseDelta); // 設定攝影機角度
