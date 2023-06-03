@@ -12,20 +12,41 @@ public class Enemy : MonoBehaviour
     [Header("生命值")]
     public float maxLife = 10.0f;              // 設定敵人的最高生命值
     public Image lifeBarImage;                 // 設定敵人血條的圖片
-    float lifeAmount;                          // 目前的生命值
+    public float lifeAmount;                          // 目前的生命值
 
-    private void Start()
+    [Header("敵人攻擊設定")]
+    public Transform attackPoint;
+    public GameObject enemyBullet;
+    public float fireForce;
+
+    public Animator animator;
+
+    protected AudioSource audioSource;
+
+    public IEnemyState currentState;
+    public IdleState idleState = new IdleState();
+    public PatrolState patrolState = new PatrolState();
+    public ChaseState chaseState = new ChaseState();
+    public AttackState attackState = new AttackState();
+
+    void Start()
     {
         lifeAmount = maxLife;
+        audioSource = GetComponent<AudioSource>();
+        ChangeState(idleState);        
     }
 
-    private void Update()
+    void Update()
     {
-        faceTarget(); // 將敵人一直正面面對角色，因為敵人和角色位置會變化，所以要不斷Update
+        currentState.OnUpdate(this);
 
         // 判斷式：如果生命數值低於0，則讓敵人消失
         if (lifeAmount <= 0.0f)
-            Destroy(gameObject);
+        {
+            StopAllCoroutines();
+            animator.SetTrigger("Dead");
+            Destroy(gameObject, 10);
+        }
     }
 
     void FixedUpdate()
@@ -46,11 +67,38 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    // 函式：將敵人一直正面面對角色(也就是讓敵人的Z軸不斷的瞄準角色)
-    void faceTarget()
+    // 方法：改變狀態
+    public void ChangeState(IEnemyState newState)
     {
-        //Vector3 targetDir = targetObject.transform.position - transform.position;                               // 計算敵人與角色之間的向量
-        //Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, 0.1f * Time.deltaTime, 0.0F);      // 依照敵人Z軸向量與兩者間向量，可以計算出需要旋轉的角度
-        //transform.rotation = Quaternion.LookRotation(newDir);                                                   // 進行旋轉
+        if (currentState != null)
+        {
+            currentState.OnExit(this);
+        }
+        currentState = newState;
+        currentState.OnEntry(this);
+    }
+
+    // 方法：攻擊
+    public void Attack(bool _enableFire)
+    {
+        if (_enableFire)
+            StartCoroutine(FireWeapons());
+        else
+            StopAllCoroutines();
+    }
+
+    IEnumerator FireWeapons()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1);
+            if (enemyBullet != null)
+            {
+                GameObject bullet = Instantiate(enemyBullet, attackPoint.position, attackPoint.rotation);
+                Vector3 dir = attackPoint.transform.forward;// + new Vector3(Random.Range(-range, range), Random.Range(-range, range), Random.Range(-range, range));
+                bullet.GetComponent<Rigidbody>().AddForce(dir * fireForce, ForceMode.Impulse);
+                audioSource.Play();
+            }
+        }
     }
 }

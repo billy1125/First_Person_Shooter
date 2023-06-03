@@ -7,44 +7,45 @@ using UnityEngine.AI;    //使用UnityEngine.AI
 public class ChaseState : IEnemyState
 {
     [Header("追擊狀態設定")]
+    [SerializeField] float minimunAttackDistance = 5;
     [SerializeField] Transform patrolPoints;
 
-    [HideInInspector] public Transform target;
-    [HideInInspector] Transform myTransform;
-    [HideInInspector] public string targetName;
-    [HideInInspector] public float loseDistance;
-
+    Transform myTransform;
+    string targetName;
+    float minimunChaseDistance;
     GameObject player;
     NavMeshAgent navMeshAgent;
 
-    public void OnEntry(EnemyBehavior enemy)
+    public void OnEntry(Enemy enemy)
     {
+        Debug.Log("ChaseState");
         myTransform = enemy.transform;
+        targetName = enemy.targetName;
+        minimunChaseDistance = enemy.minimunTraceDistance;
         navMeshAgent = enemy.GetComponent<NavMeshAgent>();
         navMeshAgent.enabled = true;
         player = GameObject.FindGameObjectWithTag(targetName);   // 以帶有特定的標籤名稱為目標物件
     }
 
-    public void OnUpdate(EnemyBehavior enemy)
-    {
-        if (PlayerLost())
+    public void OnUpdate(Enemy enemy)
+    {      
+        Chase();
+        if (PlayerInAttackArea())
+            enemy.ChangeState(enemy.attackState);
+        else if (PlayerLost())
         {
             BackToPatrolArea();
             float distance = Vector3.Distance(myTransform.position, patrolPoints.position);
             if (distance <= 1.0f)
             {
                 enemy.ChangeState(enemy.patrolState);
-            }           
-        }
-        else
-        {
-            Chase();
-        }
+            }
+        }   
     }
 
-    public void OnExit(EnemyBehavior enemy)
+    public void OnExit(Enemy enemy)
     {
-        // "Must've been the wind"
+        navMeshAgent.enabled = false;
     }
 
     public void SetTarget(NavMeshAgent _navMeshAgent)
@@ -52,20 +53,20 @@ public class ChaseState : IEnemyState
         navMeshAgent = _navMeshAgent;
     }
 
-    void Chase()
+    private void Chase()
     {
         if (navMeshAgent.enabled)
             navMeshAgent.SetDestination(player.transform.position);    // 讓自己往目標物的座標移動   
         //myTransform.position = Vector3.MoveTowards(myTransform.position, target.position, chaseSpeed * Time.deltaTime);
     }
 
-    void BackToPatrolArea()
+    private void BackToPatrolArea()
     {
         if (navMeshAgent.enabled)
             navMeshAgent.SetDestination(patrolPoints.position);    // 讓自己往目標物的座標移動  
     }
 
-    bool PlayerLost()
+    private bool PlayerLost()
     {
         //if (!target)
         //{
@@ -81,7 +82,17 @@ public class ChaseState : IEnemyState
         float distance = Vector3.Distance(player.transform.position, myTransform.position);
 
         // 判斷式：判斷距離是否低於最短追蹤距離，如果與目標的距離大於最小距離，就不追蹤，否則就開始追蹤
-        if (distance > loseDistance)
+        if (distance > minimunChaseDistance)
+            return true;
+        else
+            return false;
+    }
+
+    private bool PlayerInAttackArea()
+    {
+        float distance = Vector3.Distance(player.transform.position, myTransform.position);
+
+        if (distance <= minimunAttackDistance)
             return true;
         else
             return false;

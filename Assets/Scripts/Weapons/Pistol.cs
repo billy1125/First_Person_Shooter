@@ -21,7 +21,9 @@ public class Pistol : Guns, IAttack
 
             MakeRecoilForce(shootingDirection);
 
-            onUpdateWeaponStatus?.Invoke($"Ammo {bulletsLeft} / {maxMagazineSize}"); 
+            onUpdateWeaponStatus?.Invoke($"Ammo {bulletsLeft} / {maxMagazineSize}");
+
+            audioSource.Play();
         }
     } 
 }

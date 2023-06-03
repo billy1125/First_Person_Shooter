@@ -22,6 +22,8 @@ public class RocketLauncher : Guns, IAttack
             MakeRecoilForce(shootingDirection);
 
             onUpdateWeaponStatus?.Invoke($"Ammo {bulletsLeft} / {maxMagazineSize}");
+
+            audioSource.Play();
         }
     }
 }

@@ -2,13 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class IdleState : IEnemyState
 {
-    public void OnEntry(EnemyBehavior enemy)
+    public void OnEntry(Enemy enemy)
     {
+        //Debug.Log("IdleState");
         // This will be called when first entering the state
     }
-    public void OnUpdate(EnemyBehavior enemy)
+
+    public void OnUpdate(Enemy enemy)
     {
         //if (Input.GetKeyDown(KeyCode.Space))
         //{
@@ -16,7 +19,8 @@ public class IdleState : IEnemyState
         //}
         enemy.ChangeState(enemy.patrolState);
     }
-    public void OnExit(EnemyBehavior enemy)
+
+    public void OnExit(Enemy enemy)
     {
         // This will be called on leaving the state
     }

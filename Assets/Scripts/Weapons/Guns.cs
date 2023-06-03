@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class Guns : Weapon, IReload
 {
     [Header("參考物件")]
@@ -21,10 +22,17 @@ public class Guns : Weapon, IReload
     protected bool isReloading;
     protected int bulletsLeft;
 
+    protected AudioSource audioSource;
+
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
     void OnEnable()
     {
         bulletsLeft = maxMagazineSize;        // 遊戲一開始彈夾設定為全滿狀態
-        onUpdateWeaponStatus?.Invoke($"Ammo {bulletsLeft} / {maxMagazineSize}");
+        onUpdateWeaponStatus?.Invoke($"Ammo {bulletsLeft} / {maxMagazineSize}");        
     }
     
     // 方法：換彈夾的延遲時間設定
@@ -44,6 +52,7 @@ public class Guns : Weapon, IReload
         bulletsLeft = maxMagazineSize;          // 將子彈填滿
         isReloading = false;                    // 將換彈夾狀態設定為：更換彈夾結束
         onReload?.Invoke(false);
+        onUpdateWeaponStatus?.Invoke($"Ammo {bulletsLeft} / {maxMagazineSize}");
     }
 
     // 方法：瞄準

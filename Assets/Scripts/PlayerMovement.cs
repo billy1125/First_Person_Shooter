@@ -50,7 +50,7 @@ public class PlayerMovement : MonoBehaviour
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, whatIsGround);
         Debug.DrawRay(transform.position, new Vector3(0, -(playerHeight * 0.5f + 0.3f), 0), Color.red); // 在測試階段將射線設定為紅色線條，來看看線條長度夠不夠？
         
-        // 如果碰到地板，就設定一個反作用力(這個可以製造人物移動的減速感)
+        // 如果碰到地板，就設定一個摩擦力，避免角色因為物理材質太滑，使得角色像是在冰上移動
         if (grounded)
             rbFirstPerson.drag = groundDrag;
         else

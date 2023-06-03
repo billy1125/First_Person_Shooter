@@ -11,8 +11,8 @@ public class Bullet : MonoBehaviour
 
     // 碰撞偵測：如果碰到一個物件帶有「Target」標籤，則刪除自己
     private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.tag == "Target")
+    {        
+        if (collision.gameObject.tag == "Enemy")
             Destroy(gameObject);
     }
 }

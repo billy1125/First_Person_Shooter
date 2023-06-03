@@ -6,5 +6,5 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
     public static Action<string> onUpdateWeaponStatus;
-    public static Action<bool> onReload;
+    public static Action<bool> onReload;  
 }

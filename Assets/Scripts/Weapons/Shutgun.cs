@@ -26,8 +26,12 @@ public class Shutgun : Guns, IAttack
             }
             
             bulletsLeft --;
+
             MakeRecoilForce(shootingDirection);
+            
             onUpdateWeaponStatus?.Invoke($"Ammo {bulletsLeft} / {maxMagazineSize}");
+
+            audioSource.Play();
         }
     }
 }
