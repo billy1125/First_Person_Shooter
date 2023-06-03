@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class IdleState : IEnemyState
 {
-    public void OnEntry(Enemy enemy)
+    public void OnEntry(EnemyBehavior enemy)
     {
         // This will be called when first entering the state
     }
-    public void OnUpdate(Enemy enemy)
+    public void OnUpdate(EnemyBehavior enemy)
     {
         //if (Input.GetKeyDown(KeyCode.Space))
         //{
@@ -16,7 +16,7 @@ public class IdleState : IEnemyState
         //}
         enemy.ChangeState(enemy.patrolState);
     }
-    public void OnExit(Enemy enemy)
+    public void OnExit(EnemyBehavior enemy)
     {
         // This will be called on leaving the state
     }

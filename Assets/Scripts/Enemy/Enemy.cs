@@ -1,64 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;    //ä½¿ç”¨UnityEngine.AI
 using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
-    [Header("è¿½è¹¤ç›®æ¨™è¨­å®š")]
-    public string targetName = "Player";       // è¨­å®šç›®æ¨™ç‰©ä»¶çš„æ¨™ç±¤åç¨±
-    public float minimunTraceDistance = 5.0f;  // è¨­å®šæœ€çŸ­çš„è¿½è¹¤è·é›¢
+    [Header("°lÂÜ¥Ø¼Ğ³]©w")]
+    public string targetName = "Player";       // ³]©w¥Ø¼Ğª«¥óªº¼ĞÅÒ¦WºÙ
+    public float minimunTraceDistance = 5.0f;  // ³]©w³Ìµuªº°lÂÜ¶ZÂ÷
 
-    [Header("ç”Ÿå‘½å€¼")]
-    public float maxLife = 10.0f;              // è¨­å®šæ•µäººçš„æœ€é«˜ç”Ÿå‘½å€¼
-    public Image lifeBarImage;                 // è¨­å®šæ•µäººè¡€æ¢çš„åœ–ç‰‡
-    float lifeAmount;                          // ç›®å‰çš„ç”Ÿå‘½å€¼
+    [Header("¥Í©R­È")]
+    public float maxLife = 10.0f;              // ³]©w¼Ä¤Hªº³Ì°ª¥Í©R­È
+    public Image lifeBarImage;                 // ³]©w¼Ä¤H¦å±øªº¹Ï¤ù
+    float lifeAmount;                          // ¥Ø«eªº¥Í©R­È
 
-    NavMeshAgent navMeshAgent;                 // å®£å‘ŠNavMeshAgentç‰©ä»¶
-    GameObject targetObject = null;            // ç›®æ¨™ç‰©ä»¶çš„è®Šæ•¸
-
-    public IEnemyState currentState;
-    public IdleState idleState = new IdleState();
-    public PatrolState patrolState = new PatrolState();
-    public ChaseState chaseState = new ChaseState();
-
-    public void ChangeState(IEnemyState newState)
+    private void Start()
     {
-        if (currentState != null)
-        {
-            currentState.OnExit(this);
-        }
-        currentState = newState;
-        currentState.OnEntry(this);
-    }
-
-    void Start()
-    {
-        ChangeState(idleState);
-        
-
-        //targetObject = GameObject.FindGameObjectWithTag(targetName);   // ä»¥å¸¶æœ‰ç‰¹å®šçš„æ¨™ç±¤åç¨±ç‚ºç›®æ¨™ç‰©ä»¶
-        //navMeshAgent = GetComponent<NavMeshAgent>();                   // æ¥æ”¶NavMeshAgent
         lifeAmount = maxLife;
     }
 
-    void Update()
+    private void Update()
     {
-        currentState.OnUpdate(this);
+        faceTarget(); // ±N¼Ä¤H¤@ª½¥¿­±­±¹ï¨¤¦â¡A¦]¬°¼Ä¤H©M¨¤¦â¦ì¸m·|ÅÜ¤Æ¡A©Ò¥H­n¤£Â_Update
 
-        // è¨ˆç®—ç›®æ¨™ç‰©ä»¶å’Œè‡ªå·±çš„è·é›¢
-        // float distance = Vector3.Distance(transform.position, targetObject.transform.position);
-
-        // åˆ¤æ–·å¼ï¼šåˆ¤æ–·è·é›¢æ˜¯å¦ä½æ–¼æœ€çŸ­è¿½è¹¤è·é›¢ï¼Œå¦‚æœèˆ‡ç›®æ¨™çš„è·é›¢å¤§æ–¼æœ€å°è·é›¢ï¼Œå°±ä¸è¿½è¹¤ï¼Œå¦å‰‡å°±é–‹å§‹è¿½è¹¤
-        //if (distance <= minimunTraceDistance)
-        //    navMeshAgent.enabled = true;
-        //else
-        //    navMeshAgent.enabled = false;
-
-        faceTarget(); // å°‡æ•µäººä¸€ç›´æ­£é¢é¢å°è§’è‰²ï¼Œå› ç‚ºæ•µäººå’Œè§’è‰²ä½ç½®æœƒè®ŠåŒ–ï¼Œæ‰€ä»¥è¦ä¸æ–·Update
-
-        // åˆ¤æ–·å¼ï¼šå¦‚æœç”Ÿå‘½æ•¸å€¼ä½æ–¼0ï¼Œå‰‡è®“æ•µäººæ¶ˆå¤±
+        // §PÂ_¦¡¡G¦pªG¥Í©R¼Æ­È§C©ó0¡A«hÅı¼Ä¤H®ø¥¢
         if (lifeAmount <= 0.0f)
             Destroy(gameObject);
     }
@@ -66,26 +31,26 @@ public class Enemy : MonoBehaviour
     void FixedUpdate()
     {
         //if (navMeshAgent.enabled)
-        //    navMeshAgent.SetDestination(targetObject.transform.position);    // è®“è‡ªå·±å¾€ç›®æ¨™ç‰©çš„åº§æ¨™ç§»å‹•   
+        //    navMeshAgent.SetDestination(targetObject.transform.position);    // Åı¦Û¤v©¹¥Ø¼Ğª«ªº®y¼Ğ²¾°Ê   
     }
 
-    // ç¢°æ’åµæ¸¬
+    // ¸I¼²°»´ú
     private void OnCollisionEnter(Collision collision)
     {
-        // å¦‚æœç¢°åˆ°å¸¶æœ‰Bulletæ¨™ç±¤çš„ç‰©ä»¶ï¼Œå°±è¦æ‰£è¡€ï¼Œä¸¦ä¸”æ›´æ–°è¡€æ¢ç‹€æ…‹
+        // ¦pªG¸I¨ì±a¦³Bullet¼ĞÅÒªºª«¥ó¡A´N­n¦©¦å¡A¨Ã¥B§ó·s¦å±øª¬ºA
         if (collision.gameObject.tag == "Bullet")
         {
             lifeAmount -= 1.0f;
             //Debug.Log(lifeAmount / maxLife);
-            lifeBarImage.fillAmount = lifeAmount/maxLife;
+            lifeBarImage.fillAmount = lifeAmount / maxLife;
         }
     }
 
-    // å‡½å¼ï¼šå°‡æ•µäººä¸€ç›´æ­£é¢é¢å°è§’è‰²(ä¹Ÿå°±æ˜¯è®“æ•µäººçš„Zè»¸ä¸æ–·çš„ç„æº–è§’è‰²)
+    // ¨ç¦¡¡G±N¼Ä¤H¤@ª½¥¿­±­±¹ï¨¤¦â(¤]´N¬OÅı¼Ä¤HªºZ¶b¤£Â_ªººË·Ç¨¤¦â)
     void faceTarget()
     {
-        //Vector3 targetDir = targetObject.transform.position - transform.position;                               // è¨ˆç®—æ•µäººèˆ‡è§’è‰²ä¹‹é–“çš„å‘é‡
-        //Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, 0.1f * Time.deltaTime, 0.0F);      // ä¾ç…§æ•µäººZè»¸å‘é‡èˆ‡å…©è€…é–“å‘é‡ï¼Œå¯ä»¥è¨ˆç®—å‡ºéœ€è¦æ—‹è½‰çš„è§’åº¦
-        //transform.rotation = Quaternion.LookRotation(newDir);                                                   // é€²è¡Œæ—‹è½‰
+        //Vector3 targetDir = targetObject.transform.position - transform.position;                               // ­pºâ¼Ä¤H»P¨¤¦â¤§¶¡ªº¦V¶q
+        //Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, 0.1f * Time.deltaTime, 0.0F);      // ¨Ì·Ó¼Ä¤HZ¶b¦V¶q»P¨âªÌ¶¡¦V¶q¡A¥i¥H­pºâ¥X»İ­n±ÛÂàªº¨¤«×
+        //transform.rotation = Quaternion.LookRotation(newDir);                                                   // ¶i¦æ±ÛÂà
     }
 }

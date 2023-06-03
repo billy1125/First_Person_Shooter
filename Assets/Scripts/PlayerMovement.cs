@@ -49,6 +49,7 @@ public class PlayerMovement : MonoBehaviour
         // 射出一條看不到的射線，來判斷有沒有打到地面？
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, whatIsGround);
         Debug.DrawRay(transform.position, new Vector3(0, -(playerHeight * 0.5f + 0.3f), 0), Color.red); // 在測試階段將射線設定為紅色線條，來看看線條長度夠不夠？
+        
         // 如果碰到地板，就設定一個反作用力(這個可以製造人物移動的減速感)
         if (grounded)
             rbFirstPerson.drag = groundDrag;

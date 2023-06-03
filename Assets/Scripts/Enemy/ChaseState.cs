@@ -6,16 +6,18 @@ using UnityEngine.AI;    //使用UnityEngine.AI
 [System.Serializable]
 public class ChaseState : IEnemyState
 {
-    [SerializeField] float chaseSpeed = 8;
-    [SerializeField] float loseDistance = 5;
+    [Header("追擊狀態設定")]
+    [SerializeField] Transform patrolPoints;
+
     [HideInInspector] public Transform target;
     [HideInInspector] Transform myTransform;
-    [SerializeField] string targetName = "Player";
+    [HideInInspector] public string targetName;
+    [HideInInspector] public float loseDistance;
 
     GameObject player;
     NavMeshAgent navMeshAgent;
 
-    public void OnEntry(Enemy enemy)
+    public void OnEntry(EnemyBehavior enemy)
     {
         myTransform = enemy.transform;
         navMeshAgent = enemy.GetComponent<NavMeshAgent>();
@@ -23,11 +25,16 @@ public class ChaseState : IEnemyState
         player = GameObject.FindGameObjectWithTag(targetName);   // 以帶有特定的標籤名稱為目標物件
     }
 
-    public void OnUpdate(Enemy enemy)
+    public void OnUpdate(EnemyBehavior enemy)
     {
         if (PlayerLost())
         {
-            enemy.ChangeState(enemy.patrolState);
+            BackToPatrolArea();
+            float distance = Vector3.Distance(myTransform.position, patrolPoints.position);
+            if (distance <= 1.0f)
+            {
+                enemy.ChangeState(enemy.patrolState);
+            }           
         }
         else
         {
@@ -35,7 +42,7 @@ public class ChaseState : IEnemyState
         }
     }
 
-    public void OnExit(Enemy enemy)
+    public void OnExit(EnemyBehavior enemy)
     {
         // "Must've been the wind"
     }
@@ -50,6 +57,12 @@ public class ChaseState : IEnemyState
         if (navMeshAgent.enabled)
             navMeshAgent.SetDestination(player.transform.position);    // 讓自己往目標物的座標移動   
         //myTransform.position = Vector3.MoveTowards(myTransform.position, target.position, chaseSpeed * Time.deltaTime);
+    }
+
+    void BackToPatrolArea()
+    {
+        if (navMeshAgent.enabled)
+            navMeshAgent.SetDestination(patrolPoints.position);    // 讓自己往目標物的座標移動  
     }
 
     bool PlayerLost()

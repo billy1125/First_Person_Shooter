@@ -14,7 +14,7 @@ public interface IReload
 
 public interface IEnemyState
 {
-    void OnEntry(Enemy enemy);
-    void OnUpdate(Enemy enemy);
-    void OnExit(Enemy enemy);
+    void OnEntry(EnemyBehavior enemy);
+    void OnUpdate(EnemyBehavior enemy);
+    void OnExit(EnemyBehavior enemy);
 }

@@ -5,22 +5,25 @@ using UnityEngine;
 [System.Serializable]
 public class PatrolState : IEnemyState
 {
+    [Header("巡邏狀態設定")]
     [SerializeField] float patrolSpeed = 5;
-    [SerializeField] float loseDistance = 5;
     [SerializeField] int waypoint;
     [SerializeField] List<Transform> waypoints;
-    [SerializeField] string targetName = "Player";
+
+    [HideInInspector] public string targetName;
+    [HideInInspector] public float loseDistance;
 
     Transform myTransform;
     GameObject player;
-    //RaycastHit hitInfo;    
-
-    public void OnEntry(Enemy enemy)
-    {
+    //RaycastHit hitInfo;
+    
+    public void OnEntry(EnemyBehavior enemy)
+    {       
         myTransform = enemy.transform;
         player = GameObject.FindGameObjectWithTag(targetName);   // 以帶有特定的標籤名稱為目標物件
     }
-    public void OnUpdate(Enemy enemy)
+
+    public void OnUpdate(EnemyBehavior enemy)
     {
         Patrol();
         if (LookForPlayer())
@@ -29,7 +32,7 @@ public class PatrolState : IEnemyState
             enemy.ChangeState(enemy.chaseState);
         }
     }
-    public void OnExit(Enemy enemy)
+    public void OnExit(EnemyBehavior enemy)
     {
         // This will be called when first entering the state
     }
