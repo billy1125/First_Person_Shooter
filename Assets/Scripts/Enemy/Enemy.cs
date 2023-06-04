@@ -45,6 +45,7 @@ public class Enemy : MonoBehaviour
         {
             StopAllCoroutines();
             animator.SetTrigger("Dead");
+            ChangeState(idleState);
             Destroy(gameObject, 10);
         }
     }
