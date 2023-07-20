@@ -32,7 +32,7 @@ public class PlayerMovement : MonoBehaviour
     private float verticalInput;     // 上下方向按鍵的數值(-1 <= Y <= +1)
     private Vector3 moveDirection;   // 移動方向
     private Rigidbody rbFirstPerson; // 第一人稱物件(膠囊體)的剛體
-    private float accelerateSpeed;   // 用來切換跑步速度的變數
+    private float accelerateSpeed = 1;   // 用來切換跑步速度的變數
 
     private void Start()
     {
